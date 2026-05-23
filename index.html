@@ -469,7 +469,7 @@
   <div class="gate-box">
     <h1>Colorado Springs</h1>
     <p>October 2026 · Trip planner<br>Enter the passphrase to continue.</p>
-    <input type="password" id="pw-input" placeholder="passphrase" onkeydown="if(event.key==='Enter')checkPw()" autofocus>
+    <input type="password" id="pw-input" placeholder="passphrase" onkeydown="if(event.key==='Enter')checkPw()" autofocus autocomplete="off" data-1p-ignore data-lpignore="true">
     <button class="gate-btn" onclick="checkPw()">Enter</button>
     <p class="gate-error" id="gate-error"></p>
   </div>
