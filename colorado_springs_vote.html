@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Colorado Springs — October 2026</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&family=Source+Sans+3:wght@300;400;500&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --sand: #F5F0E8;
+    --stone: #E8E0D0;
+    --bark: #8B7355;
+    --pine: #3D5A47;
+    --sky: #5B8FA8;
+    --peak: #2C4A6E;
+    --text: #2A2218;
+    --muted: #7A6E60;
+    --card-bg: #FDFAF5;
+    --border: #D8CFC0;
+    --yes-color: #3D5A47;
+    --maybe-color: #5B8FA8;
+    --no-color: #8B7355;
+  }
+
+  body {
+    font-family: 'Source Sans 3', sans-serif;
+    background: var(--sand);
+    color: var(--text);
+    min-height: 100vh;
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  /* ── PASSWORD GATE ── */
+  #gate {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--peak);
+  }
+
+  .gate-box {
+    background: var(--card-bg);
+    border-radius: 14px;
+    padding: 2.5rem 2rem;
+    max-width: 360px;
+    width: 90%;
+    text-align: center;
+  }
+
+  .gate-box h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    font-weight: 400;
+    color: var(--peak);
+    margin-bottom: 0.3rem;
+  }
+
+  .gate-box p {
+    font-size: 0.875rem;
+    color: var(--muted);
+    margin-bottom: 1.5rem;
+  }
+
+  .gate-box input[type="password"] {
+    width: 100%;
+    padding: 0.65rem 1rem;
+    border: 1.5px solid var(--border);
+    border-radius: 7px;
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 1rem;
+    color: var(--text);
+    background: white;
+    text-align: center;
+    letter-spacing: 0.15em;
+    margin-bottom: 0.75rem;
+  }
+
+  .gate-box input[type="password"]:focus {
+    outline: none;
+    border-color: var(--sky);
+  }
+
+  .gate-btn {
+    width: 100%;
+    padding: 0.7rem;
+    background: var(--peak);
+    color: white;
+    border: none;
+    border-radius: 7px;
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+
+  .gate-btn:hover { background: var(--pine); }
+
+  .gate-error {
+    font-size: 0.85rem;
+    color: #A32D2D;
+    margin-top: 0.6rem;
+    min-height: 1.2em;
+  }
+
+  /* ── MAIN APP (hidden until password passes) ── */
+  #app { display: none; }
+
+  header {
+    background: var(--peak);
+    color: white;
+    padding: 3rem 2rem 2.5rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  header::before {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0; right: 0;
+    height: 40px;
+    background: var(--sand);
+    clip-path: ellipse(55% 100% at 50% 100%);
+  }
+
+  header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.4rem;
+    font-weight: 400;
+    letter-spacing: 0.02em;
+    margin-bottom: 0.4rem;
+  }
+
+  header p { font-size: 1rem; opacity: 0.8; font-weight: 300; }
+
+  .intro {
+    max-width: 720px;
+    margin: 2rem auto 0;
+    padding: 0 1.5rem;
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.95rem;
+    line-height: 1.7;
+  }
+
+  /* ── RESULTS BANNER (pre-vote) ── */
+  .results-bar {
+    max-width: 720px;
+    margin: 1.25rem auto 0;
+    padding: 0 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .show-results-btn {
+    background: transparent;
+    border: 1.5px solid var(--bark);
+    color: var(--bark);
+    padding: 0.45rem 1.1rem;
+    border-radius: 6px;
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .show-results-btn:hover { background: var(--bark); color: white; }
+
+  .voter-status {
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+
+  /* ── RESULTS PANEL ── */
+  #results-panel {
+    max-width: 720px;
+    margin: 1.25rem auto 0;
+    padding: 0 1.5rem;
+    display: none;
+  }
+
+  .results-inner {
+    background: var(--peak);
+    border-radius: 12px;
+    padding: 1.5rem;
+    color: white;
+  }
+
+  .results-inner h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    font-weight: 400;
+    margin-bottom: 1rem;
+    opacity: 0.95;
+  }
+
+  .results-loading {
+    font-size: 0.9rem;
+    opacity: 0.6;
+    text-align: center;
+    padding: 1rem 0;
+  }
+
+  .result-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.45rem 0;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    font-size: 0.875rem;
+  }
+
+  .result-row:last-child { border-bottom: none; }
+  .result-name { flex: 1; opacity: 0.9; }
+
+  .result-votes {
+    display: flex;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .rv-yes { color: #9FE1CB; }
+  .rv-maybe { color: #B5D4F4; }
+  .rv-no { color: rgba(255,255,255,0.4); }
+
+  .result-bar {
+    width: 70px;
+    height: 5px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 3px;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  .result-bar-fill {
+    height: 100%;
+    background: #9FE1CB;
+    border-radius: 3px;
+  }
+
+  .results-note {
+    font-size: 0.78rem;
+    opacity: 0.5;
+    margin-top: 1rem;
+    text-align: right;
+  }
+
+  /* ── VOTER ROW ── */
+  .name-row {
+    max-width: 720px;
+    margin: 1.5rem auto 0;
+    padding: 0 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .name-row label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--bark);
+    white-space: nowrap;
+  }
+
+  .name-row select {
+    padding: 0.5rem 0.9rem;
+    border: 1.5px solid var(--border);
+    border-radius: 6px;
+    background: white;
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 0.95rem;
+    color: var(--text);
+    flex: 1;
+    min-width: 140px;
+  }
+
+  .name-row select:focus { outline: none; border-color: var(--sky); }
+
+  /* ── MAIN CONTENT ── */
+  main {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 0 1.5rem 4rem;
+  }
+
+  .section-head {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    margin: 2.5rem 0 1rem;
+  }
+
+  .section-head h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.25rem;
+    font-weight: 400;
+    color: var(--peak);
+    white-space: nowrap;
+  }
+
+  .section-line { flex: 1; height: 1px; background: var(--border); }
+
+  .item-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.1rem 1.25rem;
+    margin-bottom: 0.75rem;
+    transition: border-color 0.15s;
+  }
+
+  .item-card:hover { border-color: var(--bark); }
+
+  .item-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 0.35rem;
+  }
+
+  .item-name { font-weight: 500; font-size: 1rem; color: var(--text); }
+
+  .item-link {
+    font-size: 0.8rem;
+    color: var(--sky);
+    text-decoration: none;
+    white-space: nowrap;
+    padding-top: 2px;
+    flex-shrink: 0;
+  }
+
+  .item-link:hover { text-decoration: underline; }
+
+  .item-meta {
+    font-size: 0.875rem;
+    color: var(--muted);
+    line-height: 1.5;
+    margin-bottom: 0.75rem;
+  }
+
+  .item-tags {
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.9rem;
+  }
+
+  .tag {
+    font-size: 0.75rem;
+    padding: 2px 9px;
+    border-radius: 20px;
+    font-weight: 500;
+    border: 1px solid;
+  }
+
+  .tag-free { background: #EAF3DE; color: #3B6D11; border-color: #C0DD97; }
+  .tag-paid { background: #E6F1FB; color: #185FA5; border-color: #B5D4F4; }
+  .tag-advance { background: #FAEEDA; color: #854F0B; border-color: #FAC775; }
+
+  .vote-row { display: flex; gap: 0.5rem; }
+
+  .vote-btn {
+    flex: 1;
+    padding: 0.45rem 0;
+    border-radius: 6px;
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border: 1.5px solid;
+    cursor: pointer;
+    transition: all 0.12s;
+    background: white;
+  }
+
+  .vote-btn.yes { color: var(--yes-color); border-color: #9FE1CB; }
+  .vote-btn.maybe { color: var(--maybe-color); border-color: #B5D4F4; }
+  .vote-btn.no { color: var(--no-color); border-color: var(--border); }
+
+  .vote-btn.yes.active { background: var(--yes-color); color: white; border-color: var(--yes-color); }
+  .vote-btn.maybe.active { background: var(--maybe-color); color: white; border-color: var(--maybe-color); }
+  .vote-btn.no.active { background: var(--no-color); color: white; border-color: var(--no-color); }
+
+  .vote-btn:hover:not(.active) { background: var(--stone); }
+
+  .notes-area { margin-top: 1.5rem; }
+
+  .notes-area label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--bark);
+    margin-bottom: 0.4rem;
+  }
+
+  .notes-area textarea {
+    width: 100%;
+    padding: 0.7rem 0.9rem;
+    border: 1.5px solid var(--border);
+    border-radius: 6px;
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 0.9rem;
+    color: var(--text);
+    resize: vertical;
+    min-height: 80px;
+    background: white;
+  }
+
+  .notes-area textarea:focus { outline: none; border-color: var(--sky); }
+
+  .submit-area { margin-top: 2rem; text-align: center; }
+
+  .submit-btn {
+    background: var(--pine);
+    color: white;
+    border: none;
+    padding: 0.8rem 2.5rem;
+    border-radius: 8px;
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+
+  .submit-btn:hover { background: var(--peak); }
+  .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+  .submit-status {
+    font-size: 0.9rem;
+    margin-top: 0.75rem;
+    min-height: 1.4em;
+  }
+
+  .submit-status.success { color: var(--pine); font-weight: 500; }
+  .submit-status.error { color: #A32D2D; }
+
+  footer {
+    text-align: center;
+    padding: 2rem;
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+
+  @media (max-width: 500px) {
+    header h1 { font-size: 1.8rem; }
+    .vote-btn { font-size: 0.8rem; padding: 0.4rem 0; }
+  }
+</style>
+</head>
+<body>
+
+<!-- PASSWORD GATE -->
+<div id="gate">
+  <div class="gate-box">
+    <h1>Colorado Springs</h1>
+    <p>October 2026 · Trip planner<br>Enter the passphrase to continue.</p>
+    <input type="password" id="pw-input" placeholder="passphrase" onkeydown="if(event.key==='Enter')checkPw()" autofocus>
+    <button class="gate-btn" onclick="checkPw()">Enter</button>
+    <p class="gate-error" id="gate-error"></p>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="app">
+
+  <header>
+    <h1>Colorado Springs</h1>
+    <p>October 15–20, 2026 &nbsp;·&nbsp; Scott &amp; Janell &nbsp;·&nbsp; Jose &amp; Melissa</p>
+  </header>
+
+  <div class="intro">
+    <p>This is a menu, not a schedule. Tell us what sounds interesting and we'll build the week around it. Vote on everything — no commitment, just preferences. Use the links to learn more about anything that catches your eye.</p>
+  </div>
+
+  <div class="results-bar">
+    <button class="show-results-btn" id="toggle-results-btn" onclick="toggleResults()">Show current results</button>
+    <span class="voter-status" id="voter-status"></span>
+  </div>
+
+  <div id="results-panel">
+    <div class="results-inner">
+      <h2>Group results</h2>
+      <div id="results-list"><p class="results-loading">Loading…</p></div>
+      <p class="results-note" id="results-note"></p>
+    </div>
+  </div>
+
+  <div class="name-row">
+    <label for="voter-select">Voting as:</label>
+    <select id="voter-select">
+      <option value="">— select your name —</option>
+      <option value="Scott">Scott</option>
+      <option value="Janell">Janell</option>
+      <option value="Jose">Jose</option>
+      <option value="Melissa">Melissa</option>
+    </select>
+  </div>
+
+  <main>
+
+    <div class="section-head"><h2>Attractions</h2><div class="section-line"></div></div>
+
+    <div class="item-card" data-id="cog" data-name="Pikes Peak Cog Railway">
+      <div class="item-top">
+        <span class="item-name">Pikes Peak Cog Railway</span>
+        <a class="item-link" href="https://www.cograilway.com" target="_blank">cograilway.com ↗</a>
+      </div>
+      <p class="item-meta">The highest cog railway in the world — 3.5-hr round trip to the 14,115-ft summit of America's Mountain. The aspens turn in mid-October and the summit may have snow. Seats are reserved and advance purchase is recommended.</p>
+      <div class="item-tags">
+        <span class="tag tag-paid">$67+/person</span>
+        <span class="tag tag-advance">Advance tickets advised</span>
+      </div>
+      <div class="vote-row">
+        <button class="vote-btn yes" onclick="vote(this,'yes')">✓ Yes</button>
+        <button class="vote-btn maybe" onclick="vote(this,'maybe')">~ Maybe</button>
+        <button class="vote-btn no" onclick="vote(this,'no')">✕ Pass</button>
+      </div>
+    </div>
+
+    <div class="item-card" data-id="sevenfalls" data-name="The Broadmoor Seven Falls">
+      <div class="item-top">
+        <span class="item-name">The Broadmoor Seven Falls</span>
+        <a class="item-link" href="https://www.sevenfalls.com" target="_blank">sevenfalls.com ↗</a>
+      </div>
+      <p class="item-meta">Seven cascading waterfalls in a 1,400-ft box canyon. Easy 0.8-mile walk to the base, with staircases and an elevator to an upper observation deck. Free shuttle from parking. Zip lining available separately.</p>
+      <div class="item-tags">
+        <span class="tag tag-paid">~$20/person</span>
+        <span class="tag tag-advance">Advance tickets advised</span>
+      </div>
+      <div class="vote-row">
+        <button class="vote-btn yes" onclick="vote(this,'yes')">✓ Yes</button>
+        <button class="vote-btn maybe" onclick="vote(this,'maybe')">~ Maybe</button>
+        <button class="vote-btn no" onclick="vote(this,'no')">✕ Pass</button>
+      </div>
+    </div>
+
+    <div class="item-card" data-id="cheyennezoo" data-name="Cheyenne Mountain Zoo">
+      <div class="item-top">
+        <span class="item-name">Cheyenne Mountain Zoo</span>
+        <a class="item-link" href="https://www.cmzoo.org" target="_blank">cmzoo.org ↗</a>
+      </div>
+      <p class="item-meta">America's only mountain zoo at 6,714 feet. Rated #2 Best Zoo in North America (2025). Runs a Halloween event on select October evenings — could be a fun group activity if timing lines up.</p>
+      <div class="item-tags"><span class="tag tag-paid">~$30/person</span></div>
+      <div class="vote-row">
+        <button class="vote-btn yes" onclick="vote(this,'yes')">✓ Yes</button>
+        <button class="vote-btn maybe" onclick="vote(this,'maybe')">~ Maybe</button>
+        <button class="vote-btn no" onclick="vote(this,'no')">✕ Pass</button>
+      </div>
+    </div>
+
+    <div class="item-card" data-id="olympic" data-name="U.S. Olympic & Paralympic Museum">
+      <div class="item-top">
+        <span class="item-name">U.S. Olympic &amp; Paralympic Museum</span>
+        <a class="item-link" href="https://www.usopm.org" target="_blank">usopm.org ↗</a>
+      </div>
+      <p class="item-meta">Hands-on exhibits and interactive sports stations — test your speed, accuracy, and reaction time. One of the most praised museums in Colorado Springs. Easy to pair with a downtown lunch.</p>
+      <div class="item-tags"><span class="tag tag-paid">~$25/person</span></div>
+      <div class="vote-row">
+        <button class="vote-btn yes" onclick="vote(this,'yes')">✓ Yes</button>
+        <button class="vote-btn maybe" onclick="vote(this,'maybe')">~ Maybe</button>
+        <button class="vote-btn no" onclick="vote(this,'no')">✕ Pass</button>
+      </div>
+    </div>
+
+    <div class="item-card" data-id="ghosttownmuseum" data-name="Ghost Town Museum">
+      <div class="item-top">
+        <span class="item-name">Ghost Town Museum</span>
+        <a class="item-link" href="https://www.ghosttownmuseum.com" target="_blank">ghosttownmuseum.com ↗</a>
+      </div>
+      <p class="item-meta">A walk-through recreation of a Colorado gold rush town — restored buildings, artifacts, hands-on exhibits. Low-key and fun. Good for a couple of relaxed hours between bigger activities.</p>
+      <div class="item-tags"><span class="tag tag-paid">~$10/person</span></div>
+      <div class="vote-row">
+        <button class="vote-btn yes" onclick="vote(this,'yes')">✓ Yes</button>
+        <button class="vote-btn maybe" onclick="vote(this,'maybe')">~ Maybe</button>
+        <button class="vote-btn no" onclick="vote(this,'no')">✕ Pass</button>
+      </div>
+    </div>
+
+    <div class="section-head"><h2>Outdoor &amp; scenery</h2><div class="section-line"></div></div>
+
+    <div class="item-card" data-id="gardenofgods" data-name="Garden of the Gods">
+      <div class="item-top">
+        <span class="item-name">Garden of the Gods</span>
+        <a class="item-link" href="https://gardenofgods.com" target="_blank">gardenofgods.com ↗</a>
+      </div>
+      <p class="item-meta">1,341-acre National Natural Landmark with towering red sandstone formations — Balanced Rock, Gateway Rock, and more. Visitor center has exhibits, a café, and great views of Pikes Peak. A Colorado Springs essential.</p>
+      <div class="item-tags"><span class="tag tag-free">Free entry</span></div>
+      <div class="vote-row">
+        <button class="vote-btn yes" onclick="vote(this,'yes')">✓ Yes</button>
+        <button class="vote-btn maybe" onclick="vote(this,'maybe')">~ Maybe</button>
+        <button class="vote-btn no" onclick="vote(this,'no')">✕ Pass</button>
+      </div>
+    </div>
+
+    <div class="item-card" data-id="redrockcanyon" data-name="Red Rock Canyon Open Space">
+      <div class="item-top">
+        <span class="item-name">Red Rock Canyon Open Space</span>
+        <a class="item-link" href="https://coloradosprings.gov/red-rock-canyon" target="_blank">City park info ↗</a>
+      </div>
+      <p class="item-meta">A quieter alternative to Garden of the Gods. Large red sandstone formations, hiking and biking trails through the Pikes Peak foothills. Less crowded, more rugged. Free city park.</p>
+      <div class="item-tags"><span class="tag tag-free">Free entry</span></div>
+      <div class="vote-row">
+        <button class="vote-btn yes" onclick="vote(this,'yes')">✓ Yes</button>
+        <button class="vote-btn maybe" onclick="vote(this,'maybe')">~ Maybe</button>
+        <button class="vote-btn no" onclick="vote(this,'no')">✕ Pass</button>
+      </div>
+    </div>
+
+    <div class="item-card" data-id="cheyennecanon" data-name="North Cheyenne Cañon Park">
+      <div class="item-top">
+        <span class="item-name">North Cheyenne Cañon Park</span>
+        <a class="item-link" href="https://coloradosprings.gov/north-cheyenne-canon" target="_blank">City park info ↗</a>
+      </div>
+      <p class="item-meta">Rugged canyon hiking, Helen Hunt Falls, and the Starsmore Discovery Center. A local favorite that gets overlooked by tourists. Beautiful fall foliage in October. Free entry.</p>
+      <div class="item-tags"><span class="tag tag-free">Free entry</span></div>
+      <div class="vote-row">
+        <button class="vote-btn yes" onclick="vote(this,'yes')">✓ Yes</button>
+        <button class="vote-btn maybe" onclick="vote(this,'maybe')">~ Maybe</button>
+        <button class="vote-btn no" onclick="vote(this,'no')">✕ Pass</button>
+      </div>
+    </div>
+
+    <div class="item-card" data-id="pikespeakdrive" data-name="Pikes Peak Highway (self-drive)">
+      <div class="item-top">
+        <span class="item-name">Pikes Peak Highway (self-drive)</span>
+        <a class="item-link" href="https://www.pikespeakcolorado.com" target="_blank">pikespeakcolorado.com ↗</a>
+      </div>
+      <p class="item-meta">Drive yourself to the 14,115-ft summit in your own vehicle. Same views as the Cog, more flexibility, lower cost. A good complement or alternative depending on what we decide.</p>
+      <div class="item-tags"><span class="tag tag-paid">~$15/vehicle</span></div>
+      <div class="vote-row">
+        <button class="vote-btn yes" onclick="vote(this,'yes')">✓ Yes</button>
+        <button class="vote-btn maybe" onclick="vote(this,'maybe')">~ Maybe</button>
+        <button class="vote-btn no" onclick="vote(this,'no')">✕ Pass</button>
+      </div>
+    </div>
+
+    <div class="section-head"><h2>Neighborhoods &amp; culture</h2><div class="section-line"></div></div>
+
+    <div class="item-card" data-id="manitou" data-name="Manitou Springs">
+      <div class="item-top">
+        <span class="item-name">Manitou Springs</span>
+        <a class="item-link" href="https://www.manitousprings.org" target="_blank">manitousprings.org ↗</a>
+      </div>
+      <p class="item-meta">Quirky mountain town with art galleries, the famous natural mineral spring fountains, and good independent restaurants. About 10 minutes from downtown. Pairs naturally with a Pikes Peak or Seven Falls day.</p>
+      <div class="item-tags"><span class="tag tag-free">Free to explore</span></div>
+      <div class="vote-row">
+        <button class="vote-btn yes" onclick="vote(this,'yes')">✓ Yes</button>
+        <button class="vote-btn maybe" onclick="vote(this,'maybe')">~ Maybe</button>
+        <button class="vote-btn no" onclick="vote(this,'no')">✕ Pass</button>
+      </div>
+    </div>
+
+    <div class="item-card" data-id="oldcoloradocity" data-name="Old Colorado City">
+      <div class="item-top">
+        <span class="item-name">Old Colorado City</span>
+        <a class="item-link" href="https://www.shopoldcoloradocity.com" target="_blank">shopoldcoloradocity.com ↗</a>
+      </div>
+      <p class="item-meta">Historic district lined with galleries, boutiques, and independent restaurants. Great for a relaxed afternoon stroll or a first-evening orientation after everyone lands. October is Arts Month in the Springs.</p>
+      <div class="item-tags"><span class="tag tag-free">Free to browse</span></div>
+      <div class="vote-row">
+        <button class="vote-btn yes" onclick="vote(this,'yes')">✓ Yes</button>
+        <button class="vote-btn maybe" onclick="vote(this,'maybe')">~ Maybe</button>
+        <button class="vote-btn no" onclick="vote(this,'no')">✕ Pass</button>
+      </div>
+    </div>
+
+    <div class="item-card" data-id="usafa" data-name="U.S. Air Force Academy">
+      <div class="item-top">
+        <span class="item-name">U.S. Air Force Academy</span>
+        <a class="item-link" href="https://www.usafa.af.mil/Visit" target="_blank">usafa.af.mil ↗</a>
+      </div>
+      <p class="item-meta">One of the country's most distinctive military academy campuses. Cadet Chapel, Falcon Stadium, Arnold Hall. A new visitor center outside the gate opened May 2026 — no base access required.</p>
+      <div class="item-tags"><span class="tag tag-free">Free</span></div>
+      <div class="vote-row">
+        <button class="vote-btn yes" onclick="vote(this,'yes')">✓ Yes</button>
+        <button class="vote-btn maybe" onclick="vote(this,'maybe')">~ Maybe</button>
+        <button class="vote-btn no" onclick="vote(this,'no')">✕ Pass</button>
+      </div>
+    </div>
+
+    <div class="item-card" data-id="ghosttour" data-name="Downtown ghost tour">
+      <div class="item-top">
+        <span class="item-name">Downtown ghost tour (evening)</span>
+        <a class="item-link" href="https://www.coloradospringsghosttours.com" target="_blank">Ghost tours ↗</a>
+      </div>
+      <p class="item-meta">Walking tour of historic downtown — past the Mining Exchange, Acacia Park, and The Gold Room. Spooky history and local legends. A natural fit for the Halloween season and a fun group evening activity.</p>
+      <div class="item-tags"><span class="tag tag-paid">~$20/person</span></div>
+      <div class="vote-row">
+        <button class="vote-btn yes" onclick="vote(this,'yes')">✓ Yes</button>
+        <button class="vote-btn maybe" onclick="vote(this,'maybe')">~ Maybe</button>
+        <button class="vote-btn no" onclick="vote(this,'no')">✕ Pass</button>
+      </div>
+    </div>
+
+    <div class="section-head"><h2>Dinner — nicer nights out</h2><div class="section-line"></div></div>
+
+    <div class="item-card" data-id="warehouse" data-name="The Warehouse Restaurant">
+      <div class="item-top">
+        <span class="item-name">The Warehouse Restaurant</span>
+        <a class="item-link" href="https://www.thewarehouserestaurant.com" target="_blank">thewarehouserestaurant.com ↗</a>
+      </div>
+      <p class="item-meta">New American in an art-filled industrial space downtown. Chef James Africano's menu spotlights local game and seasonal ingredients — think Thai Peanut Braised Yak and Grilled Bison Rib Eye. Inventive and memorable.</p>
+      <div class="item-tags"><span class="tag tag-paid">$$$</span></div>
+      <div class="vote-row">
+        <button class="vote-btn yes" onclick="vote(this,'yes')">✓ Yes</button>
+        <button class="vote-btn maybe" onclick="vote(this,'maybe')">~ Maybe</button>
+        <button class="vote-btn no" onclick="vote(this,'no')">✕ Pass</button>
+      </div>
+    </div>
+
+    <div class="item-card" data-id="mackenzies" data-name="MacKenzie's Chop House">
+      <div class="item-top">
+        <span class="item-name">MacKenzie's Chop House</span>
+        <a class="item-link" href="https://www.mackenzies.com" target="_blank">mackenzies.com ↗</a>
+      </div>
+      <p class="item-meta">Classic Colorado chop house — steaks, seafood, extensive wine list and martini menu. Beautiful patio with twinkling lights. One of the most consistently recommended fine dining spots in the city.</p>
+      <div class="item-tags"><span class="tag tag-paid">$$$</span></div>
+      <div class="vote-row">
+        <button class="vote-btn yes" onclick="vote(this,'yes')">✓ Yes</button>
+        <button class="vote-btn maybe" onclick="vote(this,'maybe')">~ Maybe</button>
+        <button class="vote-btn no" onclick="vote(this,'no')">✕ Pass</button>
+      </div>
+    </div>
+
+    <div class="item-card" data-id="brotherluck" data-name="Four by Brother Luck">
+      <div class="item-top">
+        <span class="item-name">Four by Brother Luck</span>
+        <a class="item-link" href="https://www.brotherluck.com" target="_blank">brotherluck.com ↗</a>
+      </div>
+      <p class="item-meta">Seasonal four-course tasting menu by Bravo TV celebrity chef Brother Luck. Multiple selections per course — you build your own progression. An experience as much as a meal. Good for a group that enjoys food as an event.</p>
+      <div class="item-tags"><span class="tag tag-paid">$$$$</span></div>
+      <div class="vote-row">
+        <button class="vote-btn yes" onclick="vote(this,'yes')">✓ Yes</button>
+        <button class="vote-btn maybe" onclick="vote(this,'maybe')">~ Maybe</button>
+        <button class="vote-btn no" onclick="vote(this,'no')">✕ Pass</button>
+      </div>
+    </div>
+
+    <div class="item-card" data-id="carlosbistro" data-name="Carlos Bistro">
+      <div class="item-top">
+        <span class="item-name">Carlos Bistro</span>
+        <a class="item-link" href="https://www.carlosbistro.com" target="_blank">carlosbistro.com ↗</a>
+      </div>
+      <p class="item-meta">Intimate upscale American — owner Carlos is known for greeting guests personally. A local hidden gem. Bison short ribs and herb-crusted salmon are standouts. Exceptional service.</p>
+      <div class="item-tags"><span class="tag tag-paid">$$$</span></div>
+      <div class="vote-row">
+        <button class="vote-btn yes" onclick="vote(this,'yes')">✓ Yes</button>
+        <button class="vote-btn maybe" onclick="vote(this,'maybe')">~ Maybe</button>
+        <button class="vote-btn no" onclick="vote(this,'no')">✕ Pass</button>
+      </div>
+    </div>
+
+    <div class="item-card" data-id="prime25" data-name="Prime 25">
+      <div class="item-top">
+        <span class="item-name">Prime 25</span>
+        <a class="item-link" href="https://prime25cs.com" target="_blank">prime25cs.com ↗</a>
+      </div>
+      <p class="item-meta">Modern steakhouse south of downtown — two stories, copper finishes, glass fireplaces, cozy lighting. A special-occasion feel without being stuffy. Good for a group celebration dinner.</p>
+      <div class="item-tags"><span class="tag tag-paid">$$$</span></div>
+      <div class="vote-row">
+        <button class="vote-btn yes" onclick="vote(this,'yes')">✓ Yes</button>
+        <button class="vote-btn maybe" onclick="vote(this,'maybe')">~ Maybe</button>
+        <button class="vote-btn no" onclick="vote(this,'no')">✕ Pass</button>
+      </div>
+    </div>
+
+    <div class="section-head"><h2>Dinner — casual &amp; fun</h2><div class="section-line"></div></div>
+
+    <div class="item-card" data-id="rabbithole" data-name="The Rabbit Hole">
+      <div class="item-top">
+        <span class="item-name">The Rabbit Hole</span>
+        <a class="item-link" href="https://www.therabbitholecos.com" target="_blank">therabbitholecos.com ↗</a>
+      </div>
+      <p class="item-meta">Whimsical decor and a hidden entrance — feels like stepping into a different world. Creative cocktails, eclectic menu. One of the most distinctive atmospheres in the city for a group night out.</p>
+      <div class="item-tags"><span class="tag tag-paid">$$</span></div>
+      <div class="vote-row">
+        <button class="vote-btn yes" onclick="vote(this,'yes')">✓ Yes</button>
+        <button class="vote-btn maybe" onclick="vote(this,'maybe')">~ Maybe</button>
+        <button class="vote-btn no" onclick="vote(this,'no')">✕ Pass</button>
+      </div>
+    </div>
+
+    <div class="item-card" data-id="tokki" data-name="Tokki">
+      <div class="item-top">
+        <span class="item-name">Tokki</span>
+        <a class="item-link" href="https://www.tokkicos.com" target="_blank">tokkicos.com ↗</a>
+      </div>
+      <p class="item-meta">Asian tapas, cozy booths, sultry lighting, live music, and excellent cocktails. Frequently named one of the top date night spots in the city. Great for a group that wants lively atmosphere and shareable plates.</p>
+      <div class="item-tags"><span class="tag tag-paid">$$</span></div>
+      <div class="vote-row">
+        <button class="vote-btn yes" onclick="vote(this,'yes')">✓ Yes</button>
+        <button class="vote-btn maybe" onclick="vote(this,'maybe')">~ Maybe</button>
+        <button class="vote-btn no" onclick="vote(this,'no')">✕ Pass</button>
+      </div>
+    </div>
+
+    <div class="item-card" data-id="goldenbee" data-name="The Golden Bee">
+      <div class="item-top">
+        <span class="item-name">The Golden Bee</span>
+        <a class="item-link" href="https://www.broadmoor.com/dining/golden-bee/" target="_blank">broadmoor.com ↗</a>
+      </div>
+      <p class="item-meta">An English pub imported piece by piece from Britain, inside The Broadmoor resort. Lively sing-along atmosphere on evenings. Communal tables, great beer selection. A fun and memorable group experience.</p>
+      <div class="item-tags"><span class="tag tag-paid">$$</span></div>
+      <div class="vote-row">
+        <button class="vote-btn yes" onclick="vote(this,'yes')">✓ Yes</button>
+        <button class="vote-btn maybe" onclick="vote(this,'maybe')">~ Maybe</button>
+        <button class="vote-btn no" onclick="vote(this,'no')">✕ Pass</button>
+      </div>
+    </div>
+
+    <div class="item-card" data-id="phantomcanyon" data-name="Phantom Canyon Brewing">
+      <div class="item-top">
+        <span class="item-name">Phantom Canyon Brewing</span>
+        <a class="item-link" href="https://www.phantomcanyon.com" target="_blank">phantomcanyon.com ↗</a>
+      </div>
+      <p class="item-meta">Craft brewery in a beautifully restored Victorian building downtown. Great beers, solid pub food, casual and relaxed. Good for a low-key group dinner without the fuss of a reservation.</p>
+      <div class="item-tags"><span class="tag tag-paid">$$</span></div>
+      <div class="vote-row">
+        <button class="vote-btn yes" onclick="vote(this,'yes')">✓ Yes</button>
+        <button class="vote-btn maybe" onclick="vote(this,'maybe')">~ Maybe</button>
+        <button class="vote-btn no" onclick="vote(this,'no')">✕ Pass</button>
+      </div>
+    </div>
+
+    <div class="item-card" data-id="margarita" data-name="The Margarita at Pine Creek">
+      <div class="item-top">
+        <span class="item-name">The Margarita at Pine Creek</span>
+        <a class="item-link" href="https://www.margaritaatpinecreek.com" target="_blank">margaritaatpinecreek.com ↗</a>
+      </div>
+      <p class="item-meta">New Mexican cuisine in a warm rustic setting with live music (acoustic, jazz). A bit off the beaten path but consistently praised for atmosphere and food. Great for a relaxed evening with good conversation.</p>
+      <div class="item-tags"><span class="tag tag-paid">$$</span></div>
+      <div class="vote-row">
+        <button class="vote-btn yes" onclick="vote(this,'yes')">✓ Yes</button>
+        <button class="vote-btn maybe" onclick="vote(this,'maybe')">~ Maybe</button>
+        <button class="vote-btn no" onclick="vote(this,'no')">✕ Pass</button>
+      </div>
+    </div>
+
+    <div class="section-head"><h2>Lunch spots</h2><div class="section-line"></div></div>
+
+    <div class="item-card" data-id="marigold" data-name="Marigold Café & Bakery">
+      <div class="item-top">
+        <span class="item-name">Marigold Café &amp; Bakery</span>
+        <a class="item-link" href="https://www.marigoldcafeandbakery.com" target="_blank">marigoldcafeandbakery.com ↗</a>
+      </div>
+      <p class="item-meta">Beloved local café known for exceptional hospitality. Consistently called one of the warmest, most welcoming spots in the city. Great for a relaxed midday break between activities.</p>
+      <div class="item-tags"><span class="tag tag-paid">$</span></div>
+      <div class="vote-row">
+        <button class="vote-btn yes" onclick="vote(this,'yes')">✓ Yes</button>
+        <button class="vote-btn maybe" onclick="vote(this,'maybe')">~ Maybe</button>
+        <button class="vote-btn no" onclick="vote(this,'no')">✕ Pass</button>
+      </div>
+    </div>
+
+    <div class="item-card" data-id="redgravy" data-name="Red Gravy">
+      <div class="item-top">
+        <span class="item-name">Red Gravy</span>
+        <a class="item-link" href="https://www.redgravy.net" target="_blank">redgravy.net ↗</a>
+      </div>
+      <p class="item-meta">Casual Italian downtown — authentic, flavorful, and well-priced. A natural lunch stop after a morning at Garden of the Gods or a walk around Old Colorado City.</p>
+      <div class="item-tags"><span class="tag tag-paid">$</span></div>
+      <div class="vote-row">
+        <button class="vote-btn yes" onclick="vote(this,'yes')">✓ Yes</button>
+        <button class="vote-btn maybe" onclick="vote(this,'maybe')">~ Maybe</button>
+        <button class="vote-btn no" onclick="vote(this,'no')">✕ Pass</button>
+      </div>
+    </div>
+
+    <div class="notes-area">
+      <label for="notes-input">Anything else? (other ideas, dietary needs, hard nos, questions)</label>
+      <textarea id="notes-input" placeholder="Type your notes here…"></textarea>
+    </div>
+
+    <div class="submit-area">
+      <button class="submit-btn" id="submit-btn" onclick="submitVotes()">Save my votes</button>
+      <p class="submit-status" id="submit-status"></p>
+    </div>
+
+  </main>
+
+  <footer>Colorado Springs · October 15–20, 2026</footer>
+
+</div><!-- /#app -->
+
+<script>
+  const ENDPOINT = 'https://script.google.com/macros/s/AKfycbyrSO-YW3D5denq6bwBIfdklXC_FPRaDNbMrospIQNrgAh-ToTc0ulAzlWcTZxyjQE0/exec';
+  const PASSWORD = 'stringdlc';
+
+  let currentVotes = {};
+  let resultsVisible = false;
+
+  // ── PASSWORD GATE ──
+  function checkPw() {
+    const val = document.getElementById('pw-input').value.trim().toLowerCase();
+    if (val === PASSWORD) {
+      document.getElementById('gate').style.display = 'none';
+      document.getElementById('app').style.display = 'block';
+    } else {
+      document.getElementById('gate-error').textContent = 'Incorrect passphrase — try again.';
+      document.getElementById('pw-input').value = '';
+      document.getElementById('pw-input').focus();
+    }
+  }
+
+  // ── VOTING ──
+  function vote(btn, choice) {
+    const card = btn.closest('.item-card');
+    card.querySelectorAll('.vote-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentVotes[card.dataset.id] = { choice, name: card.dataset.name };
+  }
+
+  // ── SUBMIT ──
+  async function submitVotes() {
+    const voter = document.getElementById('voter-select').value;
+    if (!voter) { alert('Please select your name first.'); return; }
+
+    const notes = document.getElementById('notes-input').value.trim();
+    const rows = Object.entries(currentVotes).map(([itemId, { choice, name }]) => ({
+      voter, itemId, itemName: name, vote: choice, notes
+    }));
+
+    if (rows.length === 0) { alert('Please vote on at least one item before saving.'); return; }
+
+    const btn = document.getElementById('submit-btn');
+    const status = document.getElementById('submit-status');
+    btn.disabled = true;
+    btn.textContent = 'Saving…';
+    status.textContent = '';
+    status.className = 'submit-status';
+
+    try {
+      await fetch(ENDPOINT, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ rows })
+      });
+      status.textContent = `✓ ${voter}'s votes saved! Loading group results…`;
+      status.className = 'submit-status success';
+      btn.textContent = 'Votes saved';
+      await showResults();
+    } catch (err) {
+      status.textContent = 'Something went wrong — check your connection and try again.';
+      status.className = 'submit-status error';
+      btn.disabled = false;
+      btn.textContent = 'Save my votes';
+    }
+  }
+
+  // ── RESULTS TOGGLE ──
+  async function toggleResults() {
+    if (resultsVisible) {
+      document.getElementById('results-panel').style.display = 'none';
+      document.getElementById('toggle-results-btn').textContent = 'Show current results';
+      resultsVisible = false;
+    } else {
+      await showResults();
+    }
+  }
+
+  async function showResults() {
+    document.getElementById('results-panel').style.display = 'block';
+    document.getElementById('toggle-results-btn').textContent = 'Hide results';
+    resultsVisible = true;
+    document.getElementById('results-list').innerHTML = '<p class="results-loading">Loading…</p>';
+
+    try {
+      const res = await fetch(ENDPOINT + '?v=' + Date.now());
+      const data = await res.json();
+      renderResults(data);
+    } catch (err) {
+      document.getElementById('results-list').innerHTML = '<p class="results-loading">Could not load results — try again in a moment.</p>';
+    }
+  }
+
+  function renderResults(data) {
+    const entries = Object.entries(data);
+    if (entries.length === 0) {
+      document.getElementById('results-list').innerHTML = '<p class="results-loading">No votes recorded yet.</p>';
+      return;
+    }
+
+    // Collect all voters for max score calc
+    const allVoters = new Set();
+    entries.forEach(([, v]) => {
+      [...v.yes, ...v.maybe, ...v.no].forEach(vt => allVoters.add(vt));
+    });
+    const maxScore = allVoters.size * 2;
+
+    const sorted = entries
+      .map(([id, v]) => ({ id, ...v, score: v.yes.length * 2 + v.maybe.length }))
+      .filter(r => r.score > 0)
+      .sort((a, b) => b.score - a.score);
+
+    if (sorted.length === 0) {
+      document.getElementById('results-list').innerHTML = '<p class="results-loading">No votes yet.</p>';
+      return;
+    }
+
+    document.getElementById('results-list').innerHTML = sorted.map(r => {
+      const pct = maxScore > 0 ? Math.round((r.score / maxScore) * 100) : 0;
+      const noCount = r.no.length;
+      return `<div class="result-row">
+        <span class="result-name">${r.itemName}</span>
+        <span class="result-votes">
+          <span class="rv-yes">✓&nbsp;${r.yes.length}</span>
+          <span class="rv-maybe">~&nbsp;${r.maybe.length}</span>
+          ${noCount > 0 ? `<span class="rv-no">✕&nbsp;${noCount}</span>` : ''}
+        </span>
+        <div class="result-bar"><div class="result-bar-fill" style="width:${pct}%"></div></div>
+      </div>`;
+    }).join('');
+
+    const voterList = [...allVoters].join(', ');
+    document.getElementById('results-note').textContent = `Responses from: ${voterList}`;
+    document.getElementById('voter-status').textContent = `${allVoters.size} of 4 responded`;
+  }
+</script>
+
+</body>
+</html>
